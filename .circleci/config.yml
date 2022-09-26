@@ -41,6 +41,11 @@ jobs:
               - v1-{{ .Branch }}
             paths:
               - /caches/nginixapp.tar
+        - run: 
+            name : install curl
+            command : |
+              sudo apt install curl
+
         - run:
             name: Load  the container 
             command: |

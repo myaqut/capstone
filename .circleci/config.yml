@@ -48,9 +48,6 @@ jobs:
         - run:
             name: Run  the container 
             command: |
-              ./run_docker.sh
-        - run:
-            command: |
               docker run -p 8000:80 nginixapp
 workflows:
   Default:

@@ -54,7 +54,7 @@ jobs:
         - run:
             name: Run the container 
             command: |
-              sudo ./run_docker.sh
+              ./run_docker.sh
         - run:
             command: |
               echo curl localhost:8080

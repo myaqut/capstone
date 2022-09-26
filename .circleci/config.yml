@@ -42,10 +42,13 @@ jobs:
             paths:
               - /caches/nginixapp.tar
         - run:
-            name: Load and run  the container 
+            name: Load  the container 
             command: |
               docker load -i /caches/nginixapp.tar
-
+        - run:
+            name: Run  the container 
+            command: |
+              ./run_docker.sh
         - run:
             command: |
               echo curl localhost:8080

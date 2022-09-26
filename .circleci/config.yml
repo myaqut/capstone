@@ -62,7 +62,7 @@ workflows:
   Default:
     jobs:
       - build
-      - Test: 
+      - test : 
           requires : 
             - build
 

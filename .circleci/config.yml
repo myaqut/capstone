@@ -47,7 +47,7 @@ jobs:
         - checkout
         - setup_remote_docker
         - restore_cache:
-            keys:
+            keys: 
               - v1-{{ .Branch }}
             paths:
               - /caches/app.tar

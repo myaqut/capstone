@@ -15,16 +15,6 @@ jobs:
             pip install \
               docker-compose==1.12.0 \
               awscli==1.11.76
-      - restore_cache:
-          keys:
-            - v1-{{ .Branch }}
-          paths:
-            - /caches/
-      - run:
-          name: Load Docker image layer cache
-          command: |
-            set +o pipefail
-            docker load -i /caches/app.tar | true
       - run:
           name: Build application Docker image
           command: |
@@ -34,9 +24,9 @@ jobs:
           name: Save Docker image layer cache
           command: |
             mkdir -p /caches
-            docker save -o /caches/ nginixapp
+            docker save -o /caches/nginixapp.tar nginixapp
       - save_cache:
-          key: v1-{{ .Branch }}-{{ epoch }}
+          key: v1-{{ .Branch }}
           paths:
             - /caches/
   test:
@@ -50,10 +40,11 @@ jobs:
             keys: 
               - v1-{{ .Branch }}
             paths:
-              - /caches/
+              - /caches/nginixapp.tar
         - run:
-            name: Run the container 
+            name: Load and run  the container 
             command: |
+              docker load -i /caches/nginixapp.tar
               ./run_docker.sh
         - run:
             command: |

@@ -49,6 +49,7 @@ jobs:
             name: Run  the container 
             command: |
               docker run -d -p 8000:80 nginixapp
+              curl localhost:8000
               
 workflows:
   Default:

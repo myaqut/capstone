@@ -44,7 +44,7 @@ jobs:
         - run: 
             name : install curl
             command : |
-              apt install curl
+              apk update && apk add curl curl-dev bash
 
         - run:
             name: Load  the container 

@@ -51,7 +51,7 @@ jobs:
               ./run_docker.sh
         - run:
             command: |
-              echo curl localhost:8080
+              docker run -p 8000:80 nginixapp
 workflows:
   Default:
     jobs:

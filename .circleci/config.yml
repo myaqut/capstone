@@ -28,12 +28,12 @@ jobs:
       - run:
           name: Build application Docker image
           command: |
-            docker build --cache-from=app -t NginixApp .
+            docker build --cache-from=app -t nginixapp .
       - run:
           name: Save Docker image layer cache
           command: |
             mkdir -p /caches
-            docker save -o /caches/app.tar NginixApp
+            docker save -o /caches/app.tar nginixapp
       - save_cache:
           key: v1-{{ .Branch }}-{{ epoch }}
           paths:

@@ -44,7 +44,7 @@ jobs:
         - run:
             name: Load and run  the container 
             command: |
-              docker load -i /caches/nginixapp.tar | true
+              docker load -i /caches/nginixapp.tar 
               ./run_docker.sh
         - run:
             command: |

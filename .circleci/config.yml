@@ -56,8 +56,12 @@ jobs:
               docker run -d -p 8080:80 nginixapp
               docker image ls
               docker container ls 
-              curl --retry 12 --retry-all-errors  localhost:8080
-              
+              curl --connect-timeout 5 \
+                  --max-time 10 \
+                  --retry 5 \
+                  --retry-delay 0 \
+                  --retry-max-time 40 \
+                  'localhost:8080'
 workflows:
   Default:
     jobs:

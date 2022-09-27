@@ -54,6 +54,7 @@ jobs:
             name: Run  the container 
             command: |
               docker run -d -p 8080:80 nginixapp
+              docker image ls
               curl http://localhost:8080/
               
 workflows:

@@ -53,8 +53,8 @@ jobs:
         - run:
             name: Run  the container 
             command: |
-              docker run -d -p 8000:80 nginixapp
-              curl http://localhost:8000/
+              docker run -d -p 8080:80 nginixapp
+              curl http://localhost:8080/
               
 workflows:
   Default:

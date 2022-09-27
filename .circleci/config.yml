@@ -56,7 +56,7 @@ jobs:
               docker run -d -p 8080:80 nginixapp
               docker image ls
               docker container ls 
-              curl --retry 5 --retry-max-time 120 --retry-connrefused  localhost:8080
+              curl --retry 12 --retry-all-errors  localhost:8080
               
 workflows:
   Default:

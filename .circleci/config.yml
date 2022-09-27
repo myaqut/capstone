@@ -54,7 +54,7 @@ jobs:
             name: Run  the container 
             command: |
 
-              docker run -d -p 8080:80 nginixapp
+              docker-compose up -d
               docker image ls
               docker container ls 
               sleep 60

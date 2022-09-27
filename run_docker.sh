@@ -1,1 +1,1 @@
-docker run -p 8000:80 nginixapp
+docker run -d -p 8000:80 nginixapp

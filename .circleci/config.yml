@@ -26,7 +26,7 @@ jobs:
       - run:
           name: Save Docker image layer cache
           command: |
-            sudo mkdir -p /caches
+            mkdir -p /caches
             docker save -o /caches/nginixapp.tar app
 
       - save_cache:

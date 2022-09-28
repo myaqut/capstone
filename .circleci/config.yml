@@ -22,7 +22,7 @@ jobs:
           name: Save Docker image layer cache
           command: |
             sudo mkdir -p /caches
-            docker save -o /caches/nginixapp.tar nginixapp
+            sudo docker save -o /caches/nginixapp.tar nginixapp
       - save_cache:
           key: v1-{{ .Branch }}
           paths:

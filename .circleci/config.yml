@@ -22,6 +22,7 @@ jobs:
       - run:
           name: Build application Docker image
           command: |
+            sudo service docker start
             docker build  -t nginixapp .
             docker image ls
       - run:

@@ -15,20 +15,23 @@ jobs:
             - v1-{{ .Branch }}
           paths:
             - /caches/app.tar
+      - run:
+          name: Install Docker client
+          command: apk add docker-cli
       
       - run:
           name: Build application Docker image
           command: |
+          
             docker build  -t nginixapp .
             docker image ls
       - run:
           name: Save Docker image layer cache
           command: |
-              docker run -d -p 8000:80 nginixapp
+              docker run -d -p 8080:80 nginixapp
               docker image ls
               docker container ls 
-
-              curl --retry-connrefused --retry 20 --retry-delay 5  localhost:8000
+              docker exec nginixapp curl --retry 10 --retry-connrefused http://localhost:8080
       - save_cache:
           key: v1-{{ .Branch }}
           paths:

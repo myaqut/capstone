@@ -28,7 +28,7 @@ jobs:
               docker image ls
               docker container ls 
 
-              curl --retry-connrefused --retry 20 --retry-delay 5  localhost:8080
+              curl --retry-connrefused --retry 20 --retry-delay 5  localhost:8000
       - save_cache:
           key: v1-{{ .Branch }}
           paths:

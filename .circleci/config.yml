@@ -15,10 +15,7 @@ jobs:
             - v1-{{ .Branch }}
           paths:
             - /caches/app.tar
-      - run:
-          name: Install Docker client
-          command: apk add docker-cli
-      
+
       - run:
           name: Build application Docker image
           command: |

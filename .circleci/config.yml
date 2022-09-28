@@ -24,9 +24,8 @@ jobs:
       - run:
           name: Save Docker image layer cache
           command: |
-              docker-compose up -d
-              docker image ls
-              docker container ls 
+            mkdir -p /caches
+            docker save -o /caches/app.tar app
 
       - save_cache:
           key: v1-{{ .Branch }}

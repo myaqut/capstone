@@ -4,7 +4,7 @@ jobs:
     working_directory: /app
 
     docker:
-      - image: cimg/base:2022.06
+      - image: docker:17.05.0-ce-git
 
     steps:
       - checkout
@@ -16,7 +16,7 @@ jobs:
           keys:
             - v1-{{ .Branch }}
           paths:
-            - /caches/app.tar
+            - /caches/nginixapp.tar
       
       - run:
           name: Build application Docker image

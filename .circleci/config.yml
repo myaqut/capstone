@@ -151,7 +151,7 @@ jobs:
           name: Deploy backend and run ansible
           command: |
             cd ~/project/.circleci/ansible
-            ansible-playbook -i inventory.txt deploy-backend.yml
+            ansible-playbook -i inventory.txt configure-server.yml
 
 
       - destroy-environment:

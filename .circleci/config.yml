@@ -111,6 +111,7 @@ jobs:
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --filters Name=tag:Name,Values=capstone-${CIRCLE_WORKFLOW_ID} \
             --output text)
+
             echo $backendIP
             echo $backendIP >> .circleci/ansible/inventory.txt
             echo $backendIP >> .circleci/ansible/backendip.txt

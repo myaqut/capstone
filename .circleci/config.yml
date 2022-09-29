@@ -145,21 +145,11 @@ jobs:
           command: |
             python3 -m pip install --user ansible
             sudo apt update
-            sudo apt install nodejs
-            sudo apt install npm
 
 
       - run:
           name: Deploy backend and run ansible
           command: |
-            cd backend
-            npm i
-            npm run build
-            ls
-            pwd
-            cd .. 
-            tar -C backend -czvf artifact.tar.gz .
-
             cd ~/project/.circleci/ansible
             ansible-playbook -i inventory.txt deploy-backend.yml
 

@@ -127,7 +127,50 @@ jobs:
             - project/.circleci/ansible/backendip.txt
             - project/.circleci/oldinf.txt
               # Here's where you will add some code to rollback on failure     
+  prepare-backend:
+    docker:
+      - image: cimg/python:3.10.6
 
+    steps:
+      - checkout
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: ~/
+      - add_ssh_keys:
+          fingerprints:
+            - "34:2e:bb:9d:6c:9c:eb:9e:f6:bc:5c:14:92:b4:c0:af"
+      
+      - run:
+          name: Install dependencies
+          command: |
+            python3 -m pip install --user ansible
+            sudo apt update
+            sudo apt install nodejs
+            sudo apt install npm
+
+
+      - run:
+          name: Deploy backend and run ansible
+          command: |
+            cd backend
+            npm i
+            npm run build
+            ls
+            pwd
+            cd .. 
+            tar -C backend -czvf artifact.tar.gz .
+
+            cd ~/project/.circleci/ansible
+            ansible-playbook -i inventory.txt deploy-backend.yml
+
+
+      - destroy-environment:
+            workflow_id: ${CIRCLE_WORKFLOW_ID}   
+
+
+      - revert-migrations:
+            workflow_id: ${CIRCLE_WORKFLOW_ID}   
+  
 workflows:
   Default:
     jobs:
@@ -135,4 +178,6 @@ workflows:
       - deploy-infrastructure : 
           requires:
             - build 
-
+      - prepare-backend : 
+          requires:
+            - deploy-infrastructure

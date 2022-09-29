@@ -1,19 +1,18 @@
-  - name: "update apt packages."
-    apt:
-      update_cache: yes
+    - name: Install aptitude
+      apt:
+        name: aptitude
+        state: latest
+        update_cache: true
 
-  - name: "upgrade packages"
-    apt:
-      upgrade: yes
-
-
-  - name: "install nodejs and npm"
-    apt:
-      name: ["nodejs", "npm"]
-      state: latest
-      update_cache: yes
-
-  - name: "install pm2"
-    npm:
-      name: pm2
-      global: yes
+    - name: Install required system packages
+      apt:
+        pkg:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - python3-pip
+          - virtualenv
+          - python3-setuptools
+        state: latest
+        update_cache: true

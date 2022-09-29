@@ -1,4 +1,20 @@
 version: 2.1
+
+commands:
+  destroy-environment:
+    parameters:
+      workflow_id:
+        type: string
+    steps:
+      - run:
+          name: Destroy backend
+          when: on_fail
+          command: |
+            echo backend-${CIRCLE_WORKFLOW_ID}
+            aws cloudformation delete-stack --stack-name backend-${CIRCLE_WORKFLOW_ID}
+
+
+
 jobs:
   build:
     working_directory: /app
@@ -63,17 +79,59 @@ jobs:
             name: Run  the container 
             command: |
 
-              docker-compose up -d
+              ./run_docker.sh
               docker image ls
               docker container ls 
 
-              curl --retry-connrefused --retry 20 --retry-delay 5  localhost:8080
+
+  deploy-infrastructure:
+    docker:
+      - image: cimg/aws:2022.06
+    steps:
+      - checkout
+      - run: 
+          name : get old infrastructure ID 
+          command : |
+              export OldWorkflowID=$(aws cloudformation \
+              list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+              --no-paginate --output text)
+              echo $OldWorkflowID >>  .circleci/oldinf.txt
+      - run:
+          name: Ensure back-end infrastructure exists
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/backend.yml \
+              --tags project=udacity-projec-capstone \
+              --stack-name "capstone-${CIRCLE_WORKFLOW_ID}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID}"  
+      - run:
+          name: Add back-end ip to ansible inventory
+          command: |
+            backendIP=$(aws ec2 describe-instances \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --filters Name=tag:Name,Values=capstone-${CIRCLE_WORKFLOW_ID} \
+            --output text)
+            echo $backendIP
+            echo $backendIP >> .circleci/ansible/inventory.txt
+            echo $backendIP >> .circleci/ansible/backendip.txt
+            # add workflow ID here
+      - destroy-environment:
+            workflow_id: ${CIRCLE_WORKFLOW_ID}   
+
+
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/.circleci/ansible/inventory.txt
+            - project/.circleci/ansible/backendip.txt
+            - project/.circleci/oldinf.txt
+              # Here's where you will add some code to rollback on failure     
+
 workflows:
   Default:
     jobs:
       - build
-      - test : 
-          requires : 
-            - build
-
+      - deploy-infrastructure : 
+          requires:
+            - build 
 

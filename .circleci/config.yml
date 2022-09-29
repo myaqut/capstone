@@ -168,9 +168,6 @@ jobs:
             workflow_id: ${CIRCLE_WORKFLOW_ID}   
 
 
-      - revert-migrations:
-            workflow_id: ${CIRCLE_WORKFLOW_ID}   
-  
 workflows:
   Default:
     jobs:

@@ -90,7 +90,7 @@ jobs:
             command: |
              echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
 
-             docker push yaqot/nginixapp:latest
+             docker push yaqot/nginixapp
 
   deploy-infrastructure:
     docker:

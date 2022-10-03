@@ -42,7 +42,7 @@ jobs:
       - run:
           name: run lint
           command: |
-            echo hadolint Dockerfile
+            hadolint Dockerfile
       - run:
           name: Build application Docker image
           command: |
@@ -92,6 +92,18 @@ jobs:
               docker image ls
               docker container ls 
 
+  publish-latest-docker-image:
+      environment:
+        IMAGE_NAME: nginixapp
+      docker:
+        - image: circleci/buildpack-deps:stretch
+      steps:
+        - setup_remote_docker
+        - run:
+            name: Publish Docker Image to Docker Hub
+            command: |
+              echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+              docker push $IMAGE_NAME:latest
 
   deploy-infrastructure:
     docker:
@@ -204,9 +216,15 @@ workflows:
   Default:
     jobs:
       - build
+      - test : 
+          requires:
+            - build
+      - publish-latest-docker-image : 
+          requires:
+            - test
       - deploy-infrastructure : 
           requires:
-            - build 
+            - publish-latest-docker-image 
       - prepare-backend : 
           requires:
             - deploy-infrastructure

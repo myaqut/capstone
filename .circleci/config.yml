@@ -33,7 +33,15 @@ jobs:
             - v1-{{ .Branch }}
           paths:
             - /caches/nginixapp.tar
-      
+      - run:
+          name : lint docker file 
+          command : |
+            wget -O /bin/hadolint https://github.com/hadolint/hadolint/releases/download/v2.10.0/hadolint-Linux-x86_64   
+      - run:
+          name: run lint
+          command: |
+            make lint           
+
       - run:
           name: Build application Docker image
           command: |

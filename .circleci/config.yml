@@ -72,8 +72,12 @@ jobs:
               docker container ls 
 
   publish-latest-docker-image:
-      docker:
-        - image: circleci/buildpack-deps:stretch
+    docker:
+      - image: cimg/go:1.17
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+      
       steps:
         - setup_remote_docker
         - attach_workspace:
@@ -87,10 +91,8 @@ jobs:
         - run:
             name: Publish Docker Image to Docker Hub
             command: |
-              echo "${DOCKERHUB_PASS}" | docker login --username "${DOCKERHUB_USERNAME}" --password-stdin
-
-              echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-              docker push nginixapp:latest
+              echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+              sudo docker push nginixapp:latest
 
   deploy-infrastructure:
     docker:

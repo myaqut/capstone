@@ -17,7 +17,6 @@ commands:
 
 jobs:
   build:
-    working_directory: /app
 
     docker:
       - image: docker:17.05.0-ce-git
@@ -28,11 +27,6 @@ jobs:
           version: 20.10.14
           docker_layer_caching: true
 
-      - restore_cache:
-          keys:
-            - v1-{{ .Branch }}
-          paths:
-            - /caches/nginixapp.tar
       - run:
           name : lint docker file 
           command : |
@@ -51,30 +45,24 @@ jobs:
       - run:
           name: Save Docker image layer cache
           command: |
-            mkdir -p /caches
-            docker save -o /caches/nginixapp.tar nginixapp
+            docker save -o nginixapp.tar nginixapp
 
-      - save_cache:
-          key: v1-{{ .Branch }}
+      - persist_to_workspace:
+          root: .
           paths:
-            - /caches/
+            - ./nginixapp.tar
   test:
-      working_directory: /app
       docker:
         - image: docker:17.05.0-ce-git
       steps:
         - checkout
         - setup_remote_docker
-        - restore_cache:
-            keys: 
-              - v1-{{ .Branch }}
-            paths:
-              - /caches/nginixapp.tar
-
+        - attach_workspace:
+            at: /tmp/workspace
         - run:
             name: Load  the container 
             command: |
-              docker load -i /caches/nginixapp.tar
+              docker load -i /tmp/workspace/nginixapp.tar
         - run:
             name: Run  the container 
             command: |
@@ -84,21 +72,17 @@ jobs:
               docker container ls 
 
   publish-latest-docker-image:
-      working_directory: /app
       docker:
         - image: circleci/buildpack-deps:stretch
       steps:
         - setup_remote_docker
-        - restore_cache:
-            keys: 
-              - v1-{{ .Branch }}
-            paths:
-              - /caches/nginixapp.tar
+        - attach_workspace:
+            at: /tmp/workspace
 
         - run:
             name: Load  the container 
             command: |
-              docker load -i /caches/nginixapp.tar
+              docker load -i /tmp/workspace/nginixapp.tar
 
         - run:
             name: Publish Docker Image to Docker Hub

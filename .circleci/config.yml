@@ -36,7 +36,9 @@ jobs:
       - run:
           name : lint docker file 
           command : |
-            wget -O /bin/hadolint https://github.com/hadolint/hadolint/releases/download/v2.10.0/hadolint-Linux-x86_64   
+            apk add --update openssl
+            wget -O /bin/hadolint https://github.com/hadolint/hadolint/releases/download/v1.16.3/hadolint-Linux-x86_64 &&\
+                chmod +x /bin/hadolint
       - run:
           name: run lint
           command: |

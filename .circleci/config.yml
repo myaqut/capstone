@@ -42,8 +42,7 @@ jobs:
       - run:
           name: run lint
           command: |
-            make lint           
-
+            hadolint Dockerfile
       - run:
           name: Build application Docker image
           command: |

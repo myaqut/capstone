@@ -129,7 +129,7 @@ jobs:
               # Here's where you will add some code to rollback on failure     
   prepare-backend:
     docker:
-      - image: cimg/python:3.10.6
+      - image: cimg/aws:2022.06
 
     steps:
       - checkout
@@ -158,9 +158,9 @@ jobs:
       - destroy-environment:
             workflow_id: ${CIRCLE_WORKFLOW_ID}   
 
-  smoketest:
+  smoke-test:
     docker:
-      - image: cimg/python:3.10.6
+      - image: cimg/aws:2022.06
 
     steps:
       - checkout
@@ -183,7 +183,7 @@ jobs:
           command: |
             cd ~/project/.circleci/ansible
             cat inventory.txt
-            ansible-playbook -i inventory.txt configure-server.yml
+            ansible-playbook -i inventory.txt deploy-backend.yml
       - run :
           name : test the container
           command : |
@@ -203,6 +203,6 @@ workflows:
       - prepare-backend : 
           requires:
             - deploy-infrastructure
-      - smoketest : 
+      - smoke-test : 
           requires:
             - prepare-backend

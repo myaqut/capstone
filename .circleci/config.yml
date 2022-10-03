@@ -158,6 +158,40 @@ jobs:
       - destroy-environment:
             workflow_id: ${CIRCLE_WORKFLOW_ID}   
 
+  smoketest:
+    docker:
+      - image: cimg/python:3.10.6
+
+    steps:
+      - checkout
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: ~/
+      - add_ssh_keys:
+          fingerprints:
+            - "cd:3e:dc:96:61:96:cb:85:d5:d5:6e:92:b8:6c:66:d5"
+      
+      - run:
+          name: Install dependencies
+          command: |
+            python3 -m pip install --user ansible
+            sudo apt update
+
+
+      - run:
+          name: Deploy backend and run ansible
+          command: |
+            cd ~/project/.circleci/ansible
+            cat inventory.txt
+            ansible-playbook -i inventory.txt configure-server.yml
+      - run :
+          name : test the container
+          command : |
+            machineip=`cat ~/project/.circleci/ansible/backendip.txt`
+            curl $machineip:8080
+
+      - destroy-environment:
+            workflow_id: ${CIRCLE_WORKFLOW_ID}   
 
 workflows:
   Default:
@@ -169,3 +203,6 @@ workflows:
       - prepare-backend : 
           requires:
             - deploy-infrastructure
+      - smoketest : 
+          requires:
+            - prepare-backend

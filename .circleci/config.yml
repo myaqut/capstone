@@ -46,6 +46,8 @@ jobs:
           name: Save Docker image layer cache
           command: |
             docker save -o nginixapp.tar nginixapp
+             echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+             docker push nginixapp
 
       - persist_to_workspace:
           root: .

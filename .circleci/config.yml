@@ -40,17 +40,17 @@ jobs:
       - run:
           name: Build application Docker image
           command: |
-            docker build  -t $DOCKERHUB_USERNAME/nginixapp .
+            docker build  -t yaqpt/nginixapp .
             docker image ls
       - run:
           name: Save Docker image layer cache
           command: |
-            docker save -o $DOCKERHUB_USERNAME/nginixapp.tar $DOCKERHUB_USERNAME/nginixapp
+            docker save -o nginixapp.tar yaqot/nginixapp
 
       - persist_to_workspace:
           root: .
           paths:
-            - ./$DOCKERHUB_USERNAME/nginixapp.tar
+            - ./nginixapp.tar
   test:
       docker:
         - image: docker:17.05.0-ce-git
@@ -83,14 +83,14 @@ jobs:
         - run:
             name: Load  the container 
             command: |
-              docker load -i /tmp/workspace/$DOCKERHUB_USERNAME/nginixapp.tar
+              docker load -i /tmp/workspace/nginixapp.tar
 
         - run:
             name: Publish Docker Image to Docker Hub
             command: |
              echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
 
-             docker push $DOCKERHUB_USERNAME/nginixapp
+             docker push yaqot/nginixapp
 
   deploy-infrastructure:
     docker:

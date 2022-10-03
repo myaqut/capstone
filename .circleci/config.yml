@@ -88,7 +88,9 @@ jobs:
         - run:
             name: Publish Docker Image to Docker Hub
             command: |
-             echo "W-~FbqZkR2B;Rftd" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+             echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+             docker info | sed '/Username:/!d;s/.* //'
+
              docker push nginixapp:latest
 
   deploy-infrastructure:

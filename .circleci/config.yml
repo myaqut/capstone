@@ -84,10 +84,9 @@ jobs:
               docker container ls 
 
   publish-latest-docker-image:
-      environment:
-        IMAGE_NAME: nginixapp
+      working_directory: /app
       docker:
-        - image: circleci/buildpack-deps:stretch
+        - image: docker:17.05.0-ce-git
       steps:
         - setup_remote_docker
         - restore_cache:

@@ -73,10 +73,7 @@ jobs:
 
   publish-latest-docker-image:
       docker:
-        - image: cimg/go:1.17
-          auth:
-            username: $DOCKERHUB_USERNAME
-            password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+        - image: docker:17.05.0-ce-git
       steps:
         - setup_remote_docker
         - attach_workspace:
@@ -90,7 +87,7 @@ jobs:
         - run:
             name: Publish Docker Image to Docker Hub
             command: |
-              echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+              echo $DOCKERHUB_PASSWORD  | docker login -u $DOCKERHUB_USERNAME --password-stdin
               sudo docker push nginixapp:latest
 
   deploy-infrastructure:

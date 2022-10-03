@@ -88,9 +88,8 @@ jobs:
         - run:
             name: Publish Docker Image to Docker Hub
             command: |
-              echo "$DOCKERHUB_PASSWORD" | docker login --username $DOCKERHUB_USERNAME --password-stdin
-
-              sudo docker push nginixapp:latest
+             echo “$DOCKERHUB_PASSWORD” | docker login -u “$DOCKERHUB_USERNAME” — password-stdin
+             sudo docker push nginixapp:latest
 
   deploy-infrastructure:
     docker:
@@ -203,12 +202,12 @@ workflows:
   Default:
     jobs:
       - build
-      - test : 
-          requires:
-            - build
+      # - test : 
+      #     requires:
+      #       - build
       - publish-latest-docker-image : 
           requires:
-            - test
+            - build
       - deploy-infrastructure : 
           requires:
             - publish-latest-docker-image 

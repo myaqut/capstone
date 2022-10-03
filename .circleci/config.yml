@@ -90,7 +90,7 @@ jobs:
               echo "${DOCKERHUB_PASS}" | docker login --username "${DOCKERHUB_USERNAME}" --password-stdin
 
               echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-              docker push nginixapp:latest
+              sudo docker push nginixapp:latest
 
   deploy-infrastructure:
     docker:

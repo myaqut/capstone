@@ -190,8 +190,6 @@ jobs:
             machineip=`cat ~/project/.circleci/ansible/backendip.txt`
             curl $machineip:8080
 
-      - destroy-environment:
-            workflow_id: ${CIRCLE_WORKFLOW_ID}   
 
 workflows:
   Default:

@@ -138,7 +138,7 @@ jobs:
           at: ~/
       - add_ssh_keys:
           fingerprints:
-            - "34:2e:bb:9d:6c:9c:eb:9e:f6:bc:5c:14:92:b4:c0:af"
+            - "cd:3e:dc:96:61:96:cb:85:d5:d5:6e:92:b8:6c:66:d5"
       
       - run:
           name: Install dependencies

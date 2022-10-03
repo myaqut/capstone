@@ -72,12 +72,11 @@ jobs:
               docker container ls 
 
   publish-latest-docker-image:
-    docker:
-      - image: cimg/go:1.17
-        auth:
-          username: $DOCKERHUB_USERNAME
-          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
-      
+      docker:
+        - image: cimg/go:1.17
+          auth:
+            username: $DOCKERHUB_USERNAME
+            password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
       steps:
         - setup_remote_docker
         - attach_workspace:

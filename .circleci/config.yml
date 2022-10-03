@@ -1,10 +1,4 @@
 version: 2.1
-executors:
-  docker-publisher:
-    environment:
-      IMAGE_NAME: nginixapp
-    docker:
-      - image: circleci/buildpack-deps:stretch
 
 commands:
   destroy-environment:
@@ -25,7 +19,9 @@ jobs:
   build:
     working_directory: /app
 
-    executor: docker-publisher
+    docker:
+      - image: docker:17.05.0-ce-git
+
     steps:
       - checkout
       - setup_remote_docker:
@@ -36,7 +32,7 @@ jobs:
           keys:
             - v1-{{ .Branch }}
           paths:
-            - /caches/$IMAGE_NAME.tar
+            - /caches/nginixapp.tar
       - run:
           name : lint docker file 
           command : |
@@ -50,13 +46,13 @@ jobs:
       - run:
           name: Build application Docker image
           command: |
-            docker build  -t $IMAGE_NAME .
+            docker build  -t nginixapp .
             docker image ls
       - run:
           name: Save Docker image layer cache
           command: |
             mkdir -p /caches
-            docker save -o /caches/$IMAGE_NAME.tar $IMAGE_NAME
+            docker save -o /caches/nginixapp.tar nginixapp
 
       - save_cache:
           key: v1-{{ .Branch }}
@@ -89,19 +85,20 @@ jobs:
 
   publish-latest-docker-image:
       working_directory: /app
-      executor: docker-publisher
+      docker:
+        - image: circleci/buildpack-deps:stretch
       steps:
         - setup_remote_docker
         - restore_cache:
             keys: 
               - v1-{{ .Branch }}
             paths:
-              - /caches/IMAGE_NAME.tar
+              - /caches/nginixapp.tar
 
         - run:
             name: Load  the container 
             command: |
-              docker load -i /caches/IMAGE_NAME.tar
+              docker load -i /caches/nginixapp.tar
 
         - run:
             name: Publish Docker Image to Docker Hub

@@ -1,1 +1,1 @@
-docker run -d -p 8080:80 nginixapp
+docker run -d -p 8080:80 yaqot/microserviceapp

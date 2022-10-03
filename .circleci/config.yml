@@ -28,16 +28,6 @@ jobs:
           docker_layer_caching: true
 
       - run:
-          name : lint docker file 
-          command : |
-            apk add --update openssl
-            wget -O /bin/hadolint https://github.com/hadolint/hadolint/releases/download/v1.16.3/hadolint-Linux-x86_64 &&\
-                chmod +x /bin/hadolint
-      - run:
-          name: run lint
-          command: |
-            hadolint Dockerfile
-      - run:
           name: Build application Docker image
           command: |
             docker build  -t nginixapp .

@@ -40,7 +40,7 @@ jobs:
       - run:
           name: Build application Docker image
           command: |
-            docker build  -t yaqpt/nginixapp .
+            docker build  -t yaqot/nginixapp .
             docker image ls
       - run:
           name: Save Docker image layer cache

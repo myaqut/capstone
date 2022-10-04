@@ -2,7 +2,7 @@
       docker_container:
         name: capstone
         state: started
-        image: "yaqot/microserviceapp"
+        image: "yaqot/nginixapp"
         pull: true
         ports:
           - "8080:8080"

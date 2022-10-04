@@ -19,9 +19,12 @@ commands:
 
 
 jobs:
-  build:
 
+
+
+  Lint : 
     docker:
+
       - image: docker:17.05.0-ce-git
 
     steps:
@@ -40,6 +43,18 @@ jobs:
           name: run lint
           command: |
             ./hadolint Dockerfile
+
+  build:
+
+    docker:
+      - image: docker:17.05.0-ce-git
+
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.14
+          docker_layer_caching: true
+
       - run:
           name: Build application Docker image
           command: |
@@ -73,7 +88,7 @@ jobs:
               ./run_docker.sh
               docker image ls
               docker container ls 
-
+              echo container running
   publish-latest-docker-image:
       docker:
         - image: circleci/buildpack-deps:stretch
@@ -95,112 +110,6 @@ jobs:
 
              docker push yaqot/nginixapp
 
-  deploy-infrastructure:
-    docker:
-      - image: cimg/aws:2022.06
-    steps:
-      - checkout
-      - run: 
-          name : get old infrastructure ID 
-          command : |
-              export OldWorkflowID=$(aws cloudformation \
-              list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-              --no-paginate --output text)
-              echo $OldWorkflowID >>  .circleci/oldinf.txt
-      - run:
-          name: Ensure back-end infrastructure exists
-          command: |
-            aws cloudformation deploy \
-              --template-file .circleci/files/backend.yml \
-              --tags project=udacity-projec-capstone \
-              --stack-name "capstone-${CIRCLE_WORKFLOW_ID}" \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID}"  
-      - run:
-          name: Add back-end ip to ansible inventory
-          command: |
-            backendIP=$(aws ec2 describe-instances \
-            --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --filters Name=tag:Name,Values=capstone-${CIRCLE_WORKFLOW_ID} \
-            --output text)
-            echo capstone-${CIRCLE_WORKFLOW_ID}
-            echo $backendIP
-            echo $backendIP >> .circleci/ansible/inventory.txt
-            echo $backendIP >> .circleci/ansible/backendip.txt
-            # add workflow ID here
-      - destroy-environment:
-            workflow_id: ${CIRCLE_WORKFLOW_ID}   
-
-
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project/.circleci/ansible/inventory.txt
-            - project/.circleci/ansible/backendip.txt
-            - project/.circleci/oldinf.txt
-              # Here's where you will add some code to rollback on failure     
-  prepare-backend:
-    docker:
-      - image: cimg/aws:2022.06
-
-    steps:
-      - checkout
-      - attach_workspace:
-          # Must be absolute path or relative path from working_directory
-          at: ~/
-      - add_ssh_keys:
-          fingerprints:
-            - "31:b4:dd:90:3d:8c:94:cb:cb:4b:68:81:42:35:be:46"
-      
-      - run:
-          name: Install dependencies
-          command: |
-            python3 -m pip install --user ansible
-            sudo apt update
-
-
-      - run:
-          name: Deploy backend and run ansible
-          command: |
-            cd ~/project/.circleci/ansible
-            cat inventory.txt
-            ansible-playbook -i inventory.txt configure-server.yml
-
-
-      - destroy-environment:
-            workflow_id: ${CIRCLE_WORKFLOW_ID}   
-
-  smoke-test:
-    docker:
-      - image: cimg/aws:2022.06
-
-    steps:
-      - checkout
-      - attach_workspace:
-          # Must be absolute path or relative path from working_directory
-          at: ~/
-      - add_ssh_keys:
-          fingerprints:
-            - "31:b4:dd:90:3d:8c:94:cb:cb:4b:68:81:42:35:be:46"
-      
-      - run:
-          name: Install dependencies
-          command: |
-            python3 -m pip install --user ansible
-            sudo apt update
-
-
-      - run:
-          name: Deploy backend and run ansible
-          command: |
-            cd ~/project/.circleci/ansible
-            cat inventory.txt
-            ansible-playbook -i inventory.txt deploy-backend.yml
-      - run :
-          name : test the container
-          command : |
-            machineip=`cat ~/project/.circleci/ansible/backendip.txt`
-            curl $machineip:8080
-  
   
   create-cluster:
      docker:
@@ -264,22 +173,16 @@ jobs:
 workflows:
   Default:
     jobs:
-      # - build
-      # # - test : 
-      # #     requires:
-      # #       - build
-      # - publish-latest-docker-image : 
-      #     requires:
-      #       - build
-      # - deploy-infrastructure : 
-      #     requires:
-      #       - publish-latest-docker-image 
-      # - prepare-backend : 
-      #     requires:
-      #       - deploy-infrastructure
-      # - smoke-test : 
-      #     requires:
-      #       - prepare-backend
+      - lint 
+      - build:
+          requires:
+            - lint
+      - test : 
+          requires:
+            - build
+      - publish-latest-docker-image : 
+          requires:
+            - build
       # - create-cluster:
       #     cluster-name: udacity-capstone
       - create-deployment:

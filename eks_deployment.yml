@@ -23,7 +23,7 @@ spec:
                 - amd64
                 - arm64
       containers:
-      - name: capstone-app
+      - name: udacity-capstone
         image: yaqot/nginixapp:blue
         ports:
         - name: http
@@ -35,9 +35,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: capstone-app
+  name: udacity-capstone
   labels:
-    app: capstone-app
+    app: udacity-capstone
 spec:
   type : LoadBalancer
   selector:

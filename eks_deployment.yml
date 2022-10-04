@@ -1,18 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: capstone
-  labels:
-    app: capstone-app
+  name: udacity-capstone
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: capstone-app
+      app: udacity-capstone
   template:
     metadata:
       labels:
-        app: capstone-app
+        app: udacity-capstone
     spec:
       affinity:
         nodeAffinity:
@@ -42,7 +40,7 @@ metadata:
     app: capstone-app
 spec:
   selector:
-    app: capstone-app
+    app: udacity-capstone
   ports:
     - protocol: TCP
       port: 8000

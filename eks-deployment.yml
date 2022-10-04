@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: capstone
+  namespace: capstone
+  labels:
+    app: capstone-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: capstone-app
+  template:
+    metadata:
+      labels:
+        app: capstone-app
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+                - arm64
+      containers:
+      - name: capstone-app
+        image: yaqot/nginixapp:latest
+        ports:
+        - name: http
+          containerPort: 80
+        imagePullPolicy: IfNotPresent
+      nodeSelector:
+        kubernetes.io/os: linux
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: capstone-app
+  namespace: capstone
+  labels:
+    app: capstone-app
+spec:
+  selector:
+    app: capstone-app
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 80

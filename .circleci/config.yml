@@ -39,7 +39,7 @@ jobs:
       - run:
           name: run lint
           command: |
-            hadolint Dockerfile
+            ./hadolint Dockerfile
       - run:
           name: Build application Docker image
           command: |
@@ -242,6 +242,23 @@ jobs:
           command: |
             kubectl get services
           name: Test cluster
+  create-deployment:
+    docker:
+      - image: 'cimg/python:3.10'
+    parameters:
+      cluster-name:
+        description: |
+          Name of the EKS cluster
+        type: string
+    steps:
+      - checkout
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: << parameters.cluster-name >>
+          install-kubectl: true
+      - kubernetes/create-or-update-resource:
+          get-rollout-status: true
+          resource-file-path: eks_deployment.yml
+          resource-name: deployment/udacity-capstone
 
 
 workflows:
@@ -265,7 +282,11 @@ workflows:
       #       - prepare-backend
       - create-cluster:
           cluster-name: udacity-capstone
-      - test-cluster : 
+      - create-deployment:
           cluster-name: udacity-capstone
           requires:
             - create-cluster
+      - test-cluster : 
+          cluster-name: udacity-capstone
+          requires:
+            - create-deployment

@@ -1,4 +1,7 @@
 version: 2.1
+orbs:
+  aws-eks: circleci/aws-eks@2.2.0
+  kubernetes: circleci/kubernetes@1.3
 
 commands:
   destroy-environment:
@@ -197,24 +200,45 @@ jobs:
           command : |
             machineip=`cat ~/project/.circleci/ansible/backendip.txt`
             curl $machineip:8080
+  test-cluster:
+    docker:
+      - image: 'cimg/python:3.10'
+    parameters:
+      cluster-name:
+        description: |
+          Name of the EKS cluster
+        type: string
+    steps:
+      - kubernetes/install:
+          kubectl-version: v1.22.0
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: << parameters.cluster-name >>
+          node-type: t2.micro
+
+      - run:
+          command: |
+            kubectl get services
+          name: Test cluster
 
 
 workflows:
   Default:
     jobs:
-      - build
-      # - test : 
+      # - build
+      # # - test : 
+      # #     requires:
+      # #       - build
+      # - publish-latest-docker-image : 
       #     requires:
       #       - build
-      - publish-latest-docker-image : 
-          requires:
-            - build
-      - deploy-infrastructure : 
-          requires:
-            - publish-latest-docker-image 
-      - prepare-backend : 
-          requires:
-            - deploy-infrastructure
-      - smoke-test : 
-          requires:
-            - prepare-backend
+      # - deploy-infrastructure : 
+      #     requires:
+      #       - publish-latest-docker-image 
+      # - prepare-backend : 
+      #     requires:
+      #       - deploy-infrastructure
+      # - smoke-test : 
+      #     requires:
+      #       - prepare-backend
+      - create-cluster:
+          cluster-name: udacity-capstone

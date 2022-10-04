@@ -22,7 +22,7 @@ jobs:
 
 
 
-  Lint : 
+  lint : 
     docker:
 
       - image: docker:17.05.0-ce-git

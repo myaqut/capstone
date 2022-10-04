@@ -200,6 +200,29 @@ jobs:
           command : |
             machineip=`cat ~/project/.circleci/ansible/backendip.txt`
             curl $machineip:8080
+  
+  
+    create-cluster:
+     executor: aws-eks/python3
+     parameters:
+       cluster-name:
+         description: |
+           udacity-capstone
+         type: string
+     steps:
+       - checkout
+       - aws-eks/install-aws-iam-authenticator:
+           release-tag: ''
+       - aws-eks/create-cluster:
+           cluster-name: << parameters.cluster-name >>
+           skip-kubectl-install: false
+           verbose: 3
+           node-type: t2.micro
+           nodes-max: 2
+           ssh-access: false
+           ssh-public-key: ''
+  
+  
   test-cluster:
     docker:
       - image: 'cimg/python:3.10'
@@ -242,3 +265,7 @@ workflows:
       #       - prepare-backend
       - create-cluster:
           cluster-name: udacity-capstone
+      - test-cluster : 
+          cluster-name: udacity-capstone
+          requires:
+            - create-cluster

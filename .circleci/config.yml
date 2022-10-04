@@ -42,7 +42,7 @@ jobs:
       - run:
           name: run lint
           command: |
-            ./hadolint Dockerfile
+            hadolint Dockerfile
 
   build:
 
@@ -182,11 +182,14 @@ workflows:
             - build
       - publish-latest-docker-image : 
           requires:
-            - build
+            - test
       # - create-cluster:
       #     cluster-name: udacity-capstone
       - create-deployment:
           cluster-name: udacity-capstone
+          requires:
+            - publish-latest-docker-image
+
       - test-cluster : 
           cluster-name: udacity-capstone
           requires:

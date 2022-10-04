@@ -56,7 +56,7 @@ jobs:
           root: .
           paths:
             - ./nginixapp.tar
-  test:
+  test-running-container:
       docker:
         - image: docker:17.05.0-ce-git
       steps:
@@ -164,7 +164,7 @@ workflows:
       - build:
           requires:
             - lint
-      - test : 
+      - test-running-container : 
           requires:
             - build
       - publish-latest-docker-image : 

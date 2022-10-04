@@ -202,7 +202,7 @@ jobs:
             curl $machineip:8080
   
   
-    create-cluster:
+  create-cluster:
      executor: aws-eks/python3
      parameters:
        cluster-name:

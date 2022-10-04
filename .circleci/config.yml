@@ -95,7 +95,7 @@ jobs:
             command: |
              echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
 
-             docker push yaqot/nginixapp
+             docker push yaqot/nginixapp:blue
 
   
   create-cluster:

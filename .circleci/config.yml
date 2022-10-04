@@ -280,12 +280,10 @@ workflows:
       # - smoke-test : 
       #     requires:
       #       - prepare-backend
-      - create-cluster:
-          cluster-name: udacity-capstone
+      # - create-cluster:
+      #     cluster-name: udacity-capstone
       - create-deployment:
           cluster-name: udacity-capstone
-          requires:
-            - create-cluster
       - test-cluster : 
           cluster-name: udacity-capstone
           requires:

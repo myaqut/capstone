@@ -169,7 +169,7 @@ workflows:
             - build
       - publish-latest-docker-image : 
           requires:
-            - test
+            - test-running-container
       # - create-cluster:
       #     cluster-name: udacity-capstone
       - create-deployment:
